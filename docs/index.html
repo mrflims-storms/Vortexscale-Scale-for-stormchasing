@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VortexScale Calculator</title>
+
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding-top: 40px;
+        }
+
+        img {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            border: 3px solid purple;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 20px;
+            width: 250px;
+            margin: 10px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 20px;
+            background: purple;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: rgb(180, 0, 255);
+        }
+
+        #result {
+            margin-top: 25px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .credits {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .history {
+            position: fixed;
+            right: 20px;
+            top: 40px;
+            width: 330px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid purple;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .history h3 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h1>VortexScale Calculator</h1>
+
+        <img src="vortex.png" alt="VortexScale">
+
+        <h2>Type in Wind Speed</h2>
+
+        <input id="wind" type="number" placeholder="Wind (mph or km/h)">
+        <br>
+
+        <button onclick="calcMPH()">Calculate (mph)</button>
+        <button onclick="calcKMH()">Calculate (km/h)</button>
+
+        <p id="result"></p>
+
+    </div>
+
+    <div class="history">
+        <h3>Search History</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <div class="credits">
+        Programmed by CrazyEpik • Graphics and examples by MrFlims‑Storms
+    </div>
+
+    <script>
+        const tornadoDB = [
+            { name: "Moore 2013", mph: 210 },
+            { name: "El Reno 2013", mph: 295 },
+            { name: "Bridge Creek 1999", mph: 302 },
+            { name: "Joplin 2011", mph: 200 },
+            { name: "Greensburg 2007", mph: 205 }
+        ];
+
+        function findSimilarTornadoes(mph) {
+            return tornadoDB
+                .filter(t => Math.abs(t.mph - mph) <= 20)
+                .map(t => t.name)
+                .join(", ");
+        }
+
+        let savedUser = localStorage.getItem("vortexUser");
+
+        function getUserName() {
+            if (!savedUser) {
+                savedUser = prompt("Enter your name:", "Anonymous");
+                localStorage.setItem("vortexUser", savedUser);
+            }
+            return savedUser;
+        }
+
+        let historyData = JSON.parse(localStorage.getItem("vortexHistory") || "[]");
+
+        function loadHistory() {
+            const list = document.getElementById("historyList");
+            list.innerHTML = "";
+
+            historyData.forEach(entry => {
+                const item = document.createElement("li");
+                item.innerText = entry;
+                list.appendChild(item);
+            });
+        }
+
+        loadHistory();
+
+        function getCategory(wind) {
+            if (wind < 0 || isNaN(wind)) return null;
+            if (wind < 65) return "U";
+
+            const ranges = [
+                [1, 65, 80],
+                [2, 81, 110],
+                [3, 111, 140],
+                [4, 141, 170],
+                [5, 171, 200],
+                [6, 201, 230],
+                [7, 231, 260],
+                [8, 261, 290],
+                [9, 291, 320],
+                [10, 321, 350],
+                [11, 351, 380],
+                [12, 381, 410],
+                [13, 411, 440],
+                [14, 441, 470],
+                [15, 471, 500]
+            ];
+
+            for (const r of ranges) {
+                if (wind >= r[1] && wind <= r[2]) return r[0];
+            }
+
+            return Math.floor((wind - 501) / 30) + 16;
+        }
+
+        function addHistory(user, mph, category) {
+            const similar = findSimilarTornadoes(mph);
+
+            const text =
+                `${user} searched for ${mph.toFixed(0)} mph — VS-${category}` +
+                (similar ? ` — Similar tornadoes: ${similar}` : "");
+
+            historyData.push(text);
+            localStorage.setItem("vortexHistory", JSON.stringify(historyData));
+
+            const list = document.getElementById("historyList");
+            const item = document.createElement("li");
+            item.innerText = text;
+            list.appendChild(item);
+        }
+
+        function calcMPH() {
+            const wind = parseFloat(document.getElementById("wind").value);
+            const cat = getCategory(wind);
+
+            document.getElementById("result").innerText =
+                cat ? "Category: VS-" + cat : "Invalid Input";
+
+            const user = getUserName();
+            addHistory(user, wind, cat);
+        }
+
+        function calcKMH() {
+            const kmh = parseFloat(document.getElementById("wind").value);
+            const mph = kmh / 1.60934;
+            const cat = getCategory(mph);
+
+            document.getElementById("result").innerText =
+                cat ? "Category: VS-" + cat + " (converted from km/h)" : "Invalid Input";
+
+            const user = getUserName();
+            addHistory(user, mph, cat);
+        }
+    </script>
+
+</body>
+</html>
