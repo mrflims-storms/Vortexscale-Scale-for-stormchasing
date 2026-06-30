@@ -13,3 +13,6 @@ You can check the examples in this repository.
 
 # You can use it for a simple way to Tell the windspeeds! 
 And please share this with others you know! 
+
+## The VortexScale calculator has been added today! Check it out for your future storm chases!
+crazyepik.github.io/vortexscale
