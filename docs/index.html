@@ -73,7 +73,7 @@
             position: fixed;
             right: 20px;
             top: 40px;
-            width: 260px;
+            width: 330px; /* BREITER GEMACHT */
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 10px;
@@ -138,6 +138,17 @@
                 .join(", ");
         }
 
+        /* Load saved username */
+        let savedUser = localStorage.getItem("vortexUser");
+
+        function getUserName() {
+            if (!savedUser) {
+                savedUser = prompt("Enter your name:", "Anonymous");
+                localStorage.setItem("vortexUser", savedUser);
+            }
+            return savedUser;
+        }
+
         /* VortexScale category */
         function getCategory(wind) {
             if (wind < 0 || isNaN(wind)) return null;
@@ -190,7 +201,7 @@
             document.getElementById("result").innerText =
                 cat ? "Category: VS-" + cat : "Invalid Input";
 
-            const user = prompt("Enter your name:", "Anonymous");
+            const user = getUserName();
             addHistory(user, wind, cat);
         }
 
@@ -203,7 +214,7 @@
             document.getElementById("result").innerText =
                 cat ? "Category: VS-" + cat + " (converted from km/h)" : "Invalid Input";
 
-            const user = prompt("Enter your name:", "Anonymous");
+            const user = getUserName();
             addHistory(user, mph, cat);
         }
     </script>
