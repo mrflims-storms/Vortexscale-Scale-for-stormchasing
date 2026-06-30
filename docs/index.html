@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>VortexScale Calculator</title>
@@ -58,6 +58,7 @@
             font-weight: bold;
         }
 
+        /* Credits */
         .credits {
             position: fixed;
             bottom: 10px;
@@ -65,6 +66,27 @@
             text-align: center;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* History box */
+        .history {
+            position: fixed;
+            right: 20px;
+            top: 40px;
+            width: 260px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid purple;
+            color: white;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .history h3 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -88,15 +110,38 @@
 
     </div>
 
+    <!-- History box -->
+    <div class="history">
+        <h3>Search History</h3>
+        <ul id="historyList"></ul>
+    </div>
+
+    <!-- Credits -->
     <div class="credits">
         Programmed by CrazyEpik • Graphics and examples by MrFlims‑Storms
     </div>
 
     <script>
+        /* Tornado database */
+        const tornadoDB = [
+            { name: "Moore 2013", mph: 210 },
+            { name: "El Reno 2013", mph: 295 },
+            { name: "Bridge Creek 1999", mph: 302 },
+            { name: "Joplin 2011", mph: 200 },
+            { name: "Greensburg 2007", mph: 205 }
+        ];
+
+        function findSimilarTornadoes(mph) {
+            return tornadoDB
+                .filter(t => Math.abs(t.mph - mph) <= 20)
+                .map(t => t.name)
+                .join(", ");
+        }
+
+        /* VortexScale category */
         function getCategory(wind) {
             if (wind < 0 || isNaN(wind)) return null;
 
-            // NEW: VS-U for anything below VS-1
             if (wind < 65) return "U";
 
             const ranges = [
@@ -124,14 +169,32 @@
             return Math.floor((wind - 501) / 30) + 16;
         }
 
+        /* Add history entry */
+        function addHistory(user, mph, category) {
+            const similar = findSimilarTornadoes(mph);
+            const list = document.getElementById("historyList");
+
+            const item = document.createElement("li");
+            item.innerText =
+                `${user} searched for ${mph.toFixed(0)} mph — VS-${category}` +
+                (similar ? ` — Similar tornadoes: ${similar}` : "");
+
+            list.appendChild(item);
+        }
+
+        /* Calculate mph */
         function calcMPH() {
             const wind = parseFloat(document.getElementById("wind").value);
             const cat = getCategory(wind);
 
             document.getElementById("result").innerText =
                 cat ? "Category: VS-" + cat : "Invalid Input";
+
+            const user = prompt("Enter your name:", "Anonymous");
+            addHistory(user, wind, cat);
         }
 
+        /* Calculate km/h */
         function calcKMH() {
             const kmh = parseFloat(document.getElementById("wind").value);
             const mph = kmh / 1.60934;
@@ -139,6 +202,9 @@
 
             document.getElementById("result").innerText =
                 cat ? "Category: VS-" + cat + " (converted from km/h)" : "Invalid Input";
+
+            const user = prompt("Enter your name:", "Anonymous");
+            addHistory(user, mph, cat);
         }
     </script>
 
