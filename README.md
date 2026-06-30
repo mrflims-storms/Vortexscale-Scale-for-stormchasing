@@ -15,4 +15,4 @@ You can check the examples in this repository.
 And please share this with others you know! 
 
 ## The VortexScale calculator has been added today! Check it out for your future storm chases!
-crazyepik.github.io/vortexscale
+mrflims-storms.github.io/vortexscale
