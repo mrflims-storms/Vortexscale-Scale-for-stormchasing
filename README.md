@@ -1,7 +1,7 @@
 # Vortexscale-Scale-for-stormchasing
 This is a new Sub-scale for Storm chasers.
 The “Vortex-Scale“, its simple, every VS-Scale would be every 30 mph. That means like
-65-80 mph = VS-1 (Only because its too low for a Tornado) 
+65-80 mph = VS-1 (Only because its too low for a Tornado or a gust of wind) 
 81-110 mph = VS-2
 111-140 mph = VS-3
 141-170 mph = VS-4
