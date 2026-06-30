@@ -15,4 +15,9 @@ You can check the examples in this repository.
 And please share this with others you know! 
 
 ## The VortexScale calculator has been added today! Check it out for your future storm chases!
-mrflims-storms.github.io/vortexscale
+[Click here for the calculator!](https://mrflims-storms.github.io/Vortexscale-Scale-for-stormchasing/) 
+
+## The APIs are here for your games or custom radars. 
+There is a API for your Roblox game!
+There is an Minecraft mod integration for your Mod!
+Theres an API for your radar, custom calculators, and so what(also includes python and JavaScript) 
