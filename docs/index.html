@@ -58,7 +58,6 @@
             font-weight: bold;
         }
 
-        /* Credits */
         .credits {
             position: fixed;
             bottom: 10px;
@@ -68,12 +67,11 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* History box */
         .history {
             position: fixed;
             right: 20px;
             top: 40px;
-            width: 330px; /* BREITER GEMACHT */
+            width: 330px;
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 10px;
@@ -110,19 +108,16 @@
 
     </div>
 
-    <!-- History box -->
     <div class="history">
         <h3>Search History</h3>
         <ul id="historyList"></ul>
     </div>
 
-    <!-- Credits -->
     <div class="credits">
         Programmed by CrazyEpik • Graphics and examples by MrFlims‑Storms
     </div>
 
     <script>
-        /* Tornado database */
         const tornadoDB = [
             { name: "Moore 2013", mph: 210 },
             { name: "El Reno 2013", mph: 295 },
@@ -138,7 +133,6 @@
                 .join(", ");
         }
 
-        /* Load saved username */
         let savedUser = localStorage.getItem("vortexUser");
 
         function getUserName() {
@@ -149,10 +143,23 @@
             return savedUser;
         }
 
-        /* VortexScale category */
+        let historyData = JSON.parse(localStorage.getItem("vortexHistory") || "[]");
+
+        function loadHistory() {
+            const list = document.getElementById("historyList");
+            list.innerHTML = "";
+
+            historyData.forEach(entry => {
+                const item = document.createElement("li");
+                item.innerText = entry;
+                list.appendChild(item);
+            });
+        }
+
+        loadHistory();
+
         function getCategory(wind) {
             if (wind < 0 || isNaN(wind)) return null;
-
             if (wind < 65) return "U";
 
             const ranges = [
@@ -180,20 +187,22 @@
             return Math.floor((wind - 501) / 30) + 16;
         }
 
-        /* Add history entry */
         function addHistory(user, mph, category) {
             const similar = findSimilarTornadoes(mph);
-            const list = document.getElementById("historyList");
 
-            const item = document.createElement("li");
-            item.innerText =
+            const text =
                 `${user} searched for ${mph.toFixed(0)} mph — VS-${category}` +
                 (similar ? ` — Similar tornadoes: ${similar}` : "");
 
+            historyData.push(text);
+            localStorage.setItem("vortexHistory", JSON.stringify(historyData));
+
+            const list = document.getElementById("historyList");
+            const item = document.createElement("li");
+            item.innerText = text;
             list.appendChild(item);
         }
 
-        /* Calculate mph */
         function calcMPH() {
             const wind = parseFloat(document.getElementById("wind").value);
             const cat = getCategory(wind);
@@ -205,7 +214,6 @@
             addHistory(user, wind, cat);
         }
 
-        /* Calculate km/h */
         function calcKMH() {
             const kmh = parseFloat(document.getElementById("wind").value);
             const mph = kmh / 1.60934;
